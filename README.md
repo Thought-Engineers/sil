@@ -39,7 +39,7 @@ The CLI is straightforward. It takes a command (`compress` or `decompress`), an 
 ```
 
 ## How It Works (The Silence Protocol)
-`sil` is a software implementation of the theoretical interstellar communication framework known as *The Silence Protocol*. 
+`sil` is a software implementation of the theoretical interstellar communication framework known as *The Silence Protocol*. You can read the full theoretical whitepaper here: [THE_SILENCE_PROTOCOL.pdf](./docs/THE_SILENCE_PROTOCOL.pdf).
 
 The protocol dictates abandoning traditional binary (1s and 0s) arrays in favor of a Quaternary (Base-4) system representing structural commands:
 - `0`: Data State 0
