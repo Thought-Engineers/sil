@@ -8,14 +8,14 @@ In benchmarks against highly repetitive text payloads, `sil` outperforms standar
 
 ## Features
 - **Lossless Compression**: Intelligently tokenizes alphanumeric words, whitespace, and punctuation to guarantee byte-for-byte exact matches upon decompression.
-- **Cross-Platform**: Built in Go, compiling effortlessly to single binaries for Windows, macOS, and Linux.
+- **Cross-Platform & Multi-Language**: Initially built in Go, and now includes a 100% compatible Rust implementation (`rsil`) for high-performance use cases.
 - **Topological Dictionary**: Employs Base-4 fractal pointer sequences instead of standard flat-file headers, allowing for massive theoretical compression on repetitive structures.
 
 ## Installation
 
 You can download the pre-compiled binaries from the [Releases](https://github.com/somaos-nc/sil/releases/latest) page, or build it from source.
 
-### Build from Source
+### Build Go Version
 Ensure you have [Go](https://golang.org/doc/install) installed.
 
 ```bash
@@ -24,18 +24,32 @@ cd sil
 go build -o sil cmd/sil/main.go
 ```
 
+### Build Rust Version (`rsil`)
+Ensure you have [Rust](https://rustup.rs/) installed.
+
+```bash
+git clone https://github.com/yourusername/sil.git
+cd sil/rsil
+cargo build --release
+# The compiled binary will be located at target/release/rsil
+```
+
 ## Usage
 
-The CLI is straightforward. It takes a command (`compress` or `decompress`), an input file, and an output file.
+The CLI is straightforward. It takes a command (`compress` or `decompress`), an input file, and an output file. Both the Go (`sil`) and Rust (`rsil`) versions use the identical interface and are fully cross-compatible.
 
 ### Compress a File
 ```bash
 ./sil compress my_text.txt my_text.sil
+# or
+./rsil/target/release/rsil compress my_text.txt my_text.sil
 ```
 
 ### Decompress a File
 ```bash
 ./sil decompress my_text.sil restored_text.txt
+# or
+./rsil/target/release/rsil decompress my_text.sil restored_text.txt
 ```
 
 ## How It Works (The Silence Protocol)
