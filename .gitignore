@@ -1,0 +1,9 @@
+# Binaries
+/build/
+/sil
+
+# Test artifacts
+*.sil
+*.zip
+test_out.txt
+test.txt
