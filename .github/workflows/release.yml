@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
   build-and-release:
     name: Build & Release ${{ matrix.os }} (${{ matrix.artifact_prefix }})
@@ -49,6 +52,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.22'
+          cache: false
 
       - name: Build Go Binary (sil)
         env:

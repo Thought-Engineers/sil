@@ -4,7 +4,6 @@ pub mod pack;
 use std::env;
 use std::fs::File;
 use std::io::{Read, Write};
-use std::path::Path;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
