@@ -13,7 +13,7 @@ In benchmarks against highly repetitive text payloads, `sil` outperforms standar
 
 ## Installation
 
-You can download the pre-compiled binaries from the [Releases](#) page (once published), or build it from source.
+You can download the pre-compiled binaries from the [Releases](https://github.com/somaos-nc/sil/releases/latest) page, or build it from source.
 
 ### Build from Source
 Ensure you have [Go](https://golang.org/doc/install) installed.
