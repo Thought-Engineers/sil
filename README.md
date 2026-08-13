@@ -63,5 +63,24 @@ The protocol dictates abandoning traditional binary (1s and 0s) arrays in favor 
 
 By navigating these branches, the `sil` engine dynamically maps unique molecules (words, spaces, punctuation) into a **Dictionary Sphere** and references them in a **Payload Sphere**, effectively recreating complex data structures through the universal grammar of topology.
 
+## Integration: `pcompress`
+The Sil compression engine has been integrated into the powerful, multi-threaded `pcompress` archiver as a native C-compatible backend. `pcompress` can now leverage the Base-4 Temporal Channel algorithm for repetitive datasets, combining it with chunking and parallelism to significantly reduce Sil's memory overhead on large files.
+
+The integration wraps the Rust `rsil` static library (`librsil.a`) via a C Foreign Function Interface (FFI). 
+
+> **Note on Submodules:** The `pcompress` integration is managed as a Git submodule. Because it is hosted on Codeberg, GitHub's web interface may fail to render the submodule folder link correctly. You can view and contribute to the `pcompress` fork here:
+> **[https://codeberg.org/noam-cohen/pcompress](https://codeberg.org/noam-cohen/pcompress)**
+
+To build `pcompress` with Sil support:
+```bash
+git clone --recursive https://github.com/somaos-nc/sil.git
+cd sil/rsil
+cargo build --release  # Build the Rust C-FFI static library
+
+cd ../pcompress
+./config
+make
+```
+
 ## License
 MIT License
