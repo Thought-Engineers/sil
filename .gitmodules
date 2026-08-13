@@ -1,0 +1,3 @@
+[submodule "pcompress"]
+	path = pcompress
+	url = https://codeberg.org/noam-cohen/pcompress.git
