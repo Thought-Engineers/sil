@@ -1,3 +1,6 @@
 [submodule "pcompress"]
 	path = pcompress
 	url = https://codeberg.org/noam-cohen/pcompress.git
+[submodule "rsil"]
+	path = rsil
+	url = https://github.com/somaos-nc/rsil.git

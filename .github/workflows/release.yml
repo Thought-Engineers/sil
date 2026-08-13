@@ -77,6 +77,9 @@ jobs:
       - name: Prepare Artifacts
         run: |
           mv rsil/target/${{ matrix.rust_target }}/release/rsil${{ matrix.binary_ext }} rsil-${{ matrix.artifact_prefix }}${{ matrix.binary_ext }}
+          if [ -f "rsil/target/${{ matrix.rust_target }}/release/librsil.a" ]; then
+            mv rsil/target/${{ matrix.rust_target }}/release/librsil.a librsil-${{ matrix.artifact_prefix }}.a
+          fi
         shell: bash
 
       - name: Publish Release
@@ -86,3 +89,4 @@ jobs:
           files: |
             sil-${{ matrix.artifact_prefix }}${{ matrix.binary_ext }}
             rsil-${{ matrix.artifact_prefix }}${{ matrix.binary_ext }}
+            librsil-${{ matrix.artifact_prefix }}.a

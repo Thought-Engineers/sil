@@ -25,10 +25,10 @@ go build -o sil cmd/sil/main.go
 ```
 
 ### Build Rust Version (`rsil`)
-Ensure you have [Rust](https://rustup.rs/) installed.
+The Rust version (`rsil`) is managed as a Git submodule hosted at [somaos-nc/rsil](https://github.com/somaos-nc/rsil). Ensure you have [Rust](https://rustup.rs/) installed.
 
 ```bash
-git clone https://github.com/yourusername/sil.git
+git clone --recursive https://github.com/somaos-nc/sil.git
 cd sil/rsil
 cargo build --release
 # The compiled binary will be located at target/release/rsil
