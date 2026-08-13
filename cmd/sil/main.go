@@ -42,13 +42,11 @@ func main() {
 }
 
 func compressFile(fz *fractalzip.FractalZip, input, output string) error {
-	data, err := os.ReadFile(input)
+	in, err := os.Open(input)
 	if err != nil {
 		return err
 	}
-
-	stream := fz.Compress(string(data))
-	packed := fractalzip.Pack(stream)
+	defer in.Close()
 
 	out, err := os.Create(output)
 	if err != nil {
@@ -56,16 +54,33 @@ func compressFile(fz *fractalzip.FractalZip, input, output string) error {
 	}
 	defer out.Close()
 
-	// Write length of stream as uint64
-	lengthBuf := make([]byte, 8)
-	binary.LittleEndian.PutUint64(lengthBuf, uint64(len(stream)))
-	if _, err := out.Write(lengthBuf); err != nil {
-		return err
-	}
+	chunkSize := 1024 * 1024 // 1MB chunks
+	buf := make([]byte, chunkSize)
 
-	// Write packed data
-	if _, err := out.Write(packed); err != nil {
-		return err
+	for {
+		n, err := in.Read(buf)
+		if n > 0 {
+			stream := fz.Compress(string(buf[:n]))
+			packed := fractalzip.Pack(stream)
+
+			// Write length of stream as uint64
+			lengthBuf := make([]byte, 8)
+			binary.LittleEndian.PutUint64(lengthBuf, uint64(len(stream)))
+			if _, err := out.Write(lengthBuf); err != nil {
+				return err
+			}
+
+			// Write packed data
+			if _, err := out.Write(packed); err != nil {
+				return err
+			}
+		}
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -78,21 +93,38 @@ func decompressFile(fz *fractalzip.FractalZip, input, output string) error {
 	}
 	defer in.Close()
 
-	// Read length
-	lengthBuf := make([]byte, 8)
-	if _, err := io.ReadFull(in, lengthBuf); err != nil {
-		return err
-	}
-	streamLen := binary.LittleEndian.Uint64(lengthBuf)
-
-	// Read packed data
-	packed, err := io.ReadAll(in)
+	out, err := os.Create(output)
 	if err != nil {
 		return err
 	}
+	defer out.Close()
 
-	stream := fractalzip.Unpack(packed, int(streamLen))
-	recovered := fz.Decompress(stream)
+	for {
+		// Read length
+		lengthBuf := make([]byte, 8)
+		_, err := io.ReadFull(in, lengthBuf)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+		streamLen := binary.LittleEndian.Uint64(lengthBuf)
 
-	return os.WriteFile(output, []byte(recovered), 0644)
+		// Calculate packed bytes length (4 symbols per byte)
+		packedLen := (int(streamLen) + 3) / 4
+		packed := make([]byte, packedLen)
+		if _, err := io.ReadFull(in, packed); err != nil {
+			return err
+		}
+
+		stream := fractalzip.Unpack(packed, int(streamLen))
+		recovered := fz.Decompress(stream)
+
+		if _, err := out.Write([]byte(recovered)); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

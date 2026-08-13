@@ -42,42 +42,52 @@ fn main() {
 }
 
 fn compress_file(fz: &fractalzip::FractalZip, input: &str, output: &str) -> std::io::Result<()> {
-    let mut data = String::new();
-    let mut file = File::open(input)?;
-    file.read_to_string(&mut data)?;
-
-    let stream = fz.compress(&data);
-    let packed = pack::pack(&stream);
-
-    let mut out = File::create(output)?;
+    let mut in_file = File::open(input)?;
+    let mut out_file = File::create(output)?;
     
-    // Write length of stream as u64 in little-endian
-    let length = stream.len() as u64;
-    out.write_all(&length.to_le_bytes())?;
+    let mut buf = vec![0u8; 1024 * 1024]; // 1MB chunks
     
-    // Write packed data
-    out.write_all(&packed)?;
+    loop {
+        let n = in_file.read(&mut buf)?;
+        if n == 0 {
+            break;
+        }
+        
+        let data = String::from_utf8_lossy(&buf[..n]).to_string();
+        let stream = fz.compress(&data);
+        let packed = pack::pack(&stream);
+        
+        let length = stream.len() as u64;
+        out_file.write_all(&length.to_le_bytes())?;
+        out_file.write_all(&packed)?;
+    }
 
     Ok(())
 }
 
 fn decompress_file(fz: &fractalzip::FractalZip, input: &str, output: &str) -> std::io::Result<()> {
     let mut in_file = File::open(input)?;
-    
-    // Read length
-    let mut length_buf = [0u8; 8];
-    in_file.read_exact(&mut length_buf)?;
-    let stream_len = u64::from_le_bytes(length_buf) as usize;
-
-    // Read packed data
-    let mut packed = Vec::new();
-    in_file.read_to_end(&mut packed)?;
-
-    let stream = pack::unpack(&packed, stream_len);
-    let recovered = fz.decompress(&stream);
-
     let mut out_file = File::create(output)?;
-    out_file.write_all(recovered.as_bytes())?;
+    
+    loop {
+        let mut length_buf = [0u8; 8];
+        match in_file.read_exact(&mut length_buf) {
+            Ok(_) => {},
+            Err(e) if e.kind() == std::io::ErrorKind::UnexpectedEof => break,
+            Err(e) => return Err(e),
+        }
+        
+        let stream_len = u64::from_le_bytes(length_buf) as usize;
+        let packed_len = (stream_len + 3) / 4;
+        
+        let mut packed = vec![0u8; packed_len];
+        in_file.read_exact(&mut packed)?;
+
+        let stream = pack::unpack(&packed, stream_len);
+        let recovered = fz.decompress(&stream);
+
+        out_file.write_all(recovered.as_bytes())?;
+    }
 
     Ok(())
 }
