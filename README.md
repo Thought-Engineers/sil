@@ -83,4 +83,9 @@ make
 ```
 
 ## License
-MIT License
+The `sil` and `rsil` engines are licensed under the **MIT License**.
+
+### Third-Party Licenses
+The `pcompress` integration and its submodule are dual-licensed under the **GNU Lesser General Public License v3 (LGPLv3)** and the **Mozilla Public License v2 (MPLv2)**. 
+
+Please note that while most of `pcompress` is covered under MPLv2, certain bundled third-party components (like LZP and PackJPG) use LGPLv2/3. See `pcompress/README.LICENSE` for full details on distributing the integrated binary.
