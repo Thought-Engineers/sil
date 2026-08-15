@@ -3,4 +3,4 @@
 	url = https://codeberg.org/noam-cohen/pcompress.git
 [submodule "rsil"]
 	path = rsil
-	url = https://github.com/somaos-nc/rsil.git
+	url = https://github.com/Thought-Engineers/rsil
