@@ -21,6 +21,8 @@ jobs:
             go_arch: amd64
             rust_target: x86_64-unknown-linux-gnu
             binary_ext: ''
+            static_lib_name: 'librsil.a'
+            static_lib_artifact: 'librsil-linux-amd64.a'
             artifact_prefix: linux-amd64
           # macOS Apple Silicon (M1/M2/M3)
           - os: macos-latest
@@ -28,6 +30,8 @@ jobs:
             go_arch: arm64
             rust_target: aarch64-apple-darwin
             binary_ext: ''
+            static_lib_name: 'librsil.a'
+            static_lib_artifact: 'librsil-darwin-arm64.a'
             artifact_prefix: darwin-arm64
           # macOS Intel
           - os: macos-13
@@ -35,6 +39,8 @@ jobs:
             go_arch: amd64
             rust_target: x86_64-apple-darwin
             binary_ext: ''
+            static_lib_name: 'librsil.a'
+            static_lib_artifact: 'librsil-darwin-amd64.a'
             artifact_prefix: darwin-amd64
           # Windows x64
           - os: windows-latest
@@ -42,6 +48,8 @@ jobs:
             go_arch: amd64
             rust_target: x86_64-pc-windows-msvc
             binary_ext: .exe
+            static_lib_name: 'rsil.lib'
+            static_lib_artifact: 'rsil-windows-amd64.lib'
             artifact_prefix: windows-amd64
 
     steps:
@@ -79,8 +87,8 @@ jobs:
       - name: Prepare Artifacts
         run: |
           mv rsil/target/${{ matrix.rust_target }}/release/rsil${{ matrix.binary_ext }} rsil-${{ matrix.artifact_prefix }}${{ matrix.binary_ext }}
-          if [ -f "rsil/target/${{ matrix.rust_target }}/release/librsil.a" ]; then
-            mv rsil/target/${{ matrix.rust_target }}/release/librsil.a librsil-${{ matrix.artifact_prefix }}.a
+          if [ -f "rsil/target/${{ matrix.rust_target }}/release/${{ matrix.static_lib_name }}" ]; then
+            mv rsil/target/${{ matrix.rust_target }}/release/${{ matrix.static_lib_name }} ${{ matrix.static_lib_artifact }}
           fi
         shell: bash
 
@@ -91,4 +99,4 @@ jobs:
           files: |
             sil-${{ matrix.artifact_prefix }}${{ matrix.binary_ext }}
             rsil-${{ matrix.artifact_prefix }}${{ matrix.binary_ext }}
-            librsil-${{ matrix.artifact_prefix }}.a
+            ${{ matrix.static_lib_artifact }}
